@@ -1,0 +1,60 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: HWPKit tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift test
+        working-directory: Packages/HWPKit
+        run: swift test
+
+  build:
+    name: App build (iOS + macOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project HWPViewer.xcodeproj -scheme HWPViewer \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/sim \
+            CODE_SIGNING_ALLOWED=NO -quiet
+
+      - name: Build unsigned iOS app (.ipa for sideloading)
+        run: |
+          xcodebuild build \
+            -project HWPViewer.xcodeproj -scheme HWPViewer -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/ios \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" -quiet
+          mkdir -p dist/Payload
+          cp -R build/ios/Build/Products/Release-iphoneos/HWPViewer.app dist/Payload/
+          (cd dist && zip -qry HWPViewer-unsigned.ipa Payload && rm -rf Payload)
+
+      - name: Build macOS app (ad-hoc signed)
+        run: |
+          xcodebuild build \
+            -project HWPViewer.xcodeproj -scheme HWPViewer -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath build/mac \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" -quiet
+          ditto -c -k --keepParent build/mac/Build/Products/Release/HWPViewer.app dist/HWPViewer-macOS.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HWPViewer-builds
+          path: dist/
+          retention-days: 30
