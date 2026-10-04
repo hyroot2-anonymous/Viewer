@@ -34,7 +34,7 @@ final class WebViewStore: NSObject, ObservableObject, WKNavigationDelegate {
         }
         if let url = navigationAction.request.url, ["http", "https", "mailto"].contains(url.scheme?.lowercased() ?? "") {
             #if os(iOS)
-            UIApplication.shared.open(url)
+            await UIApplication.shared.open(url)
             #else
             NSWorkspace.shared.open(url)
             #endif
