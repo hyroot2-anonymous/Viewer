@@ -1,0 +1,6 @@
+// Signing defaults. Personal values (Team ID, bundle ID) go in Local.xcconfig,
+// which is git-ignored; copy Local.xcconfig.example to create it.
+PRODUCT_BUNDLE_IDENTIFIER = com.hyroot2.HWPViewer
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"

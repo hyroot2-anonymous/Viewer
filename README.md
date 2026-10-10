@@ -25,6 +25,8 @@ Packages/HWPKit/          파서 + 렌더러 (순수 Swift, Linux에서도 테�
   Model/                    공통 문서 모델
   Render/HTMLRenderer.swift 문서 → 자체 완결 HTML
 project.yml               XcodeGen 프로젝트 정의
+Config/                   서명 설정 (개인 Team·번들 ID는 git에 안 올라가는 Local.xcconfig)
+scripts/setup-mac.sh      Mac에서 Xcode 프로젝트 준비
 .github/workflows/        macOS 러너에서 테스트 + iOS/macOS 빌드, 설치 파일 생성
 ```
 
@@ -37,8 +39,8 @@ cd Packages/HWPKit && swift test
 # 여러 문서를 한꺼번에 검사하고 HTML 결과 저장
 HWP_CORPUS=~/hwp-samples HWP_HTML_OUT=/tmp/out swift test --filter testCorpus
 
-# Xcode 프로젝트 생성 (Mac)
-brew install xcodegen && xcodegen generate && open HWPViewer.xcodeproj
+# Xcode 프로젝트 생성 (Mac) — XcodeGen 설치, 개인 서명 설정 파일 생성까지 처리
+./scripts/setup-mac.sh
 ```
 
 ## 알려진 한계

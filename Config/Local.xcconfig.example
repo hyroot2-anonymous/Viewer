@@ -1,0 +1,10 @@
+// Copy this file to Config/Local.xcconfig (git-ignored) and fill in your values.
+// scripts/setup-mac.sh does the copy for you.
+
+// Team ID shown in Xcode › Settings › Accounts (free "Personal Team" works).
+// Leave empty to pick the team in Xcode › Signing & Capabilities instead.
+DEVELOPMENT_TEAM =
+
+// Must be unique across all Apple developers. If Xcode says the identifier
+// "is not available", change the middle part, e.g. com.yourname.HWPViewer.
+PRODUCT_BUNDLE_IDENTIFIER = com.hyroot2.HWPViewer
